@@ -1,15 +1,19 @@
-import "package:todolist/app/home/model/home_model.dart";
+import 'package:todolist/app/data/repositories/task_repository.dart';
+import 'package:todolist/app/home/model/task_model.dart';
+
 class HomeViewModel {
-  List<Task> tasks = [
-    Task(name: "Task 1", isDone: true),
-    Task(name: "Task 2", isDone: false),
+  final TaskRepository _taskRepository;
 
-  ];
+  HomeViewModel(this._taskRepository);
 
-  int get tasksDone => tasks.where((task) => task.isDone).length;
-  int get tasksRemaining => tasks.length - tasksDone;
+  List<Task> get tasks => _taskRepository.tasks;
+
+  int get tasksDone =>
+      _taskRepository.tasks.where((task) => task.isDone).length;
+
+  int get tasksRemaining => _taskRepository.tasks.length - tasksDone;
 
   void toggleTaskStatus(int index) {
-    tasks[index].isDone = !tasks[index].isDone;
+    _taskRepository.tasks[index].isDone = !_taskRepository.tasks[index].isDone;
   }
 }

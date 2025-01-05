@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/app/data/repositories/task_repository.dart';
 import 'package:todolist/app/home/viewmodel/home_viewmodel.dart';
 import 'package:todolist/app/home/widgets/card_widget.dart';
 
@@ -10,7 +11,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final HomeViewModel viewModel = HomeViewModel();
+  final TaskRepository _taskRepository = TaskRepository();
+  late final HomeViewModel viewModel;
+
+  @override
+  void initState() {
+    super.initState();
+    viewModel = HomeViewModel(_taskRepository);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +53,9 @@ class _HomePageState extends State<HomePage> {
                           onPressed: () {},
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(5, 40),
-                            backgroundColor: Colors.blue.withValues(
-                                alpha: 0.5),
+                            backgroundColor: Colors.blue.withOpacity(0.5),
                             shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(
-                                  8),
+                              borderRadius: BorderRadius.circular(8),
                             ),
                           ),
                           child: Row(
@@ -59,7 +65,7 @@ class _HomePageState extends State<HomePage> {
                                 Icons.add,
                                 color: Colors.blue[800],
                               ),
-                              SizedBox( width:8 ),
+                              SizedBox(width: 8),
                               Text(
                                 "Add Task",
                                 style: TextStyle(
