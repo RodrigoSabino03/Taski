@@ -13,18 +13,17 @@ class DonePage extends StatefulWidget {
 
 class _DonePageState extends State<DonePage> {
   late DoneViewModel _doneViewModel;
-  late List<Task> _completedTasks;
 
   @override
   void initState() {
     super.initState();
     _doneViewModel = DoneViewModel(TaskRepository());
-    _loadCompletedTasks();  
   }
 
-  void _loadCompletedTasks() async {
-    _completedTasks = await _doneViewModel.getCompletedTasks();
-    setState(() {});  
+  // Função que lida com a exclusão de uma tarefa
+  void _deleteCompletedTask(int taskId) async {
+    await _doneViewModel.delete(taskId);
+    setState(() {}); // Atualiza a UI após a exclusão da tarefa
   }
 
   @override
@@ -41,7 +40,7 @@ class _DonePageState extends State<DonePage> {
               ElevatedButton(
                 onPressed: () async {
                   await _doneViewModel.deleteAll();
-                  _loadCompletedTasks();  
+                  setState(() {});  // Recarrega a página após excluir todas as tarefas
                 },
                 child: Text("Delete All"),
               ),
@@ -49,8 +48,15 @@ class _DonePageState extends State<DonePage> {
           ),
           SizedBox(height: 16),
 
-          _completedTasks.isEmpty
-              ? Center(
+          FutureBuilder<List<Task>>(
+            future: _doneViewModel.getCompletedTasks(),
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return Center(child: CircularProgressIndicator());
+              }
+
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                return Center(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
@@ -85,24 +91,27 @@ class _DonePageState extends State<DonePage> {
                       ),
                     ],
                   ),
-                )
-              : Expanded(
-                  child: ListView.builder(
-                    itemCount: _completedTasks.length,
-                    itemBuilder: (context, index) {
-                      final task = _completedTasks[index];
+                );
+              }
 
-                      return CardWidget(
-                        name: task.name,
-                        index: index,
-                        onDelete: () async {
-                          await _doneViewModel.delete(task.id);
-                          _loadCompletedTasks();
-                        },
-                      );
-                    },
-                  ),
+              final completedTasks = snapshot.data!;
+
+              return Expanded(
+                child: ListView.builder(
+                  itemCount: completedTasks.length,
+                  itemBuilder: (context, index) {
+                    final task = completedTasks[index];
+
+                    return CardWidget(
+                      name: task.name,
+                      index: index,
+                      onDelete: () => _deleteCompletedTask(task.id),
+                    );
+                  },
                 ),
+              );
+            },
+          ),
         ],
       ),
     );

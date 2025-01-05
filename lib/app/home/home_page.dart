@@ -13,18 +13,22 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late HomeViewModel _homeViewModel;
-  late List<Task> _tasks;  
+  late Future<List<Task>> _tasksFuture;
 
   @override
   void initState() {
     super.initState();
     _homeViewModel = HomeViewModel(TaskRepository());
-    _loadTasks();  
+    _tasksFuture = _homeViewModel.getAllTasks();  // Carrega as tarefas apenas uma vez
   }
 
-  void _loadTasks() async {
-    _tasks = await _homeViewModel.getAllTasks();
-    setState(() {});  
+  // Função que lida com a atualização de status de uma tarefa
+  void _toggleTaskStatus(int index, Task task) async {
+    await _homeViewModel.toggleTaskStatus(index);
+    setState(() {
+      // Apenas atualiza a tarefa alterada, sem necessidade de recarregar tudo
+      task.isDone = !task.isDone;
+    });
   }
 
   @override
@@ -39,14 +43,41 @@ class _HomePageState extends State<HomePage> {
             style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
           SizedBox(height: 8),
-          Text(
-            "You've completed ${_tasks.where((task) => task.isDone).length} out of ${_tasks.length} tasks.",
-            style: TextStyle(fontSize: 16, color: Colors.grey),
+          FutureBuilder<List<Task>>(
+            future: _tasksFuture,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting) {
+                return CircularProgressIndicator();
+              }
+
+              if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                return Text(
+                  "You've completed 0 tasks out of 0 tasks.",
+                  style: TextStyle(fontSize: 16, color: Colors.grey),
+                );
+              }
+
+              final tasks = snapshot.data!;
+              final tasksDone = tasks.where((task) => task.isDone).length;
+              final tasksRemaining = tasks.length - tasksDone;
+
+              return Text(
+                "You've completed $tasksDone out of ${tasks.length} tasks. $tasksRemaining tasks remaining.",
+                style: TextStyle(fontSize: 16, color: Colors.grey),
+              );
+            },
           ),
           SizedBox(height: 16),
           Expanded(
-            child: _tasks.isEmpty
-                ? Center(
+            child: FutureBuilder<List<Task>>(
+              future: _tasksFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                if (snapshot.hasError || !snapshot.hasData || snapshot.data!.isEmpty) {
+                  return Center(
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
@@ -81,23 +112,26 @@ class _HomePageState extends State<HomePage> {
                         ),
                       ],
                     ),
-                  )
-                : ListView.builder(
-                    itemCount: _tasks.length,
-                    itemBuilder: (context, index) {
-                      final task = _tasks[index];
+                  );
+                }
 
-                      return CardWidget(
-                        name: task.name,
-                        isDone: task.isDone,
-                        index: index,
-                        onToggle: () async {
-                          await _homeViewModel.toggleTaskStatus(index);
-                          _loadTasks(); 
-                        },
-                      );
-                    },
-                  ),
+                final tasks = snapshot.data!;
+
+                return ListView.builder(
+                  itemCount: tasks.length,
+                  itemBuilder: (context, index) {
+                    final task = tasks[index];
+
+                    return CardWidget(
+                      name: task.name,
+                      isDone: task.isDone,
+                      index: index,
+                      onToggle: () => _toggleTaskStatus(index, task),
+                    );
+                  },
+                );
+              },
+            ),
           ),
         ],
       ),
