@@ -1,25 +1,26 @@
-// task_repository.dart
-import 'package:todolist/app/home/model/task_model.dart';
+import 'package:todolist/app/data/db/database.dart';
+import 'package:todolist/app/data/model/task_model.dart';
 
 class TaskRepository {
-  // Shared list of tasks
-  List<Task> tasks = [
-    Task(name: "Task 1", isDone: true),
-    Task(name: "Task 2", isDone: false),
-    Task(name: "Task 3", isDone: false),
-    Task(name: "Task 4", isDone: true),
-    Task(name: "Task 5", isDone: false),
-    Task(name: "Task 6", isDone: false),
-    Task(name: "Task 7", isDone: false),
-  ];
+  final DatabaseHelper _databaseHelper = DatabaseHelper();
 
-  // Method to delete a task by index
-  void deleteTask(int index) {
-    tasks.removeAt(index);
+  Future<int> insertTask(Task task) async {
+    return await _databaseHelper.insertTask(task);
   }
 
-  // Method to delete all tasks
-  void deleteAllTasks() {
-    tasks.clear();
+  Future<List<Task>> getTasks() async {
+    return await _databaseHelper.getTasks();
+  }
+
+  Future<int> updateTask(Task task) async {
+    return await _databaseHelper.updateTask(task);
+  }
+
+  Future<int> deleteTask(int id) async {
+    return await _databaseHelper.deleteTask(id);
+  }
+
+  Future<int> deleteAllTasks() async {
+    return await _databaseHelper.deleteAllTasks();
   }
 }

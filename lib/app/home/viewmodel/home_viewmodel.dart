@@ -1,19 +1,25 @@
+import 'package:todolist/app/data/model/task_model.dart';
 import 'package:todolist/app/data/repositories/task_repository.dart';
-import 'package:todolist/app/home/model/task_model.dart';
 
 class HomeViewModel {
   final TaskRepository _taskRepository;
 
   HomeViewModel(this._taskRepository);
 
-  List<Task> get tasks => _taskRepository.tasks;
+  Future<List<Task>> getActiveTasks() async {
+    final tasks = await _taskRepository.getTasks();
+    return tasks.where((task) => !task.isDone).toList();
+  }
 
-  int get tasksDone =>
-      _taskRepository.tasks.where((task) => task.isDone).length;
+  Future<void> addTask(String taskName) async {
+    final newTask = Task(id: 0, name: taskName);  
+    await _taskRepository.insertTask(newTask);
+  }
 
-  int get tasksRemaining => _taskRepository.tasks.length - tasksDone;
-
-  void toggleTaskStatus(int index) {
-    _taskRepository.tasks[index].isDone = !_taskRepository.tasks[index].isDone;
+  Future<void> toggleTaskStatus(int index) async {
+    final tasks = await getActiveTasks();
+    final task = tasks[index];
+    task.isDone = !task.isDone;
+    await _taskRepository.updateTask(task);
   }
 }

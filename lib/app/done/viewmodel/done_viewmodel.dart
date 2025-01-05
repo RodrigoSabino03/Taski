@@ -1,24 +1,21 @@
-// done_view_model.dart
+import 'package:todolist/app/data/model/task_model.dart';
 import 'package:todolist/app/data/repositories/task_repository.dart';
-import 'package:todolist/app/home/model/task_model.dart';
-
 
 class DoneViewModel {
   final TaskRepository _taskRepository;
 
   DoneViewModel(this._taskRepository);
 
-  // Get only completed tasks
-  List<Task> get completedTasks =>
-      _taskRepository.tasks.where((task) => task.isDone).toList();
-
-  // Delete a specific task
-  void delete(int index) {
-    _taskRepository.deleteTask(index);
+  Future<List<Task>> getCompletedTasks() async {
+    final tasks = await _taskRepository.getTasks();
+    return tasks.where((task) => task.isDone).toList();
   }
 
-  // Delete all tasks
-  void deleteAll() {
-    _taskRepository.deleteAllTasks();
+  Future<void> delete(int id) async {
+    await _taskRepository.deleteTask(id);
+  }
+
+  Future<void> deleteAll() async {
+    await _taskRepository.deleteAllTasks();
   }
 }
