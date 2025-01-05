@@ -3,11 +3,7 @@ class HomeViewModel {
   List<Task> tasks = [
     Task(name: "Task 1", isDone: true),
     Task(name: "Task 2", isDone: false),
-    Task(name: "Task 3", isDone: false),
-    Task(name: "Task 4", isDone: true),
-    Task(name: "Task 5", isDone: false),
-    Task(name: "Task 6", isDone: false),
-    Task(name: "Task 7", isDone: false),
+
   ];
 
   int get tasksDone => tasks.where((task) => task.isDone).length;
