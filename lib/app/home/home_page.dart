@@ -19,14 +19,12 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     _homeViewModel = HomeViewModel(TaskRepository());
-    _tasksFuture = _homeViewModel.getAllTasks();  // Carrega as tarefas apenas uma vez
+    _tasksFuture = _homeViewModel.getAllTasks(); 
   }
 
-  // Função que lida com a atualização de status de uma tarefa
   void _toggleTaskStatus(int index, Task task) async {
     await _homeViewModel.toggleTaskStatus(index);
     setState(() {
-      // Apenas atualiza a tarefa alterada, sem necessidade de recarregar tudo
       task.isDone = !task.isDone;
     });
   }

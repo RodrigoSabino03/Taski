@@ -20,10 +20,9 @@ class _DonePageState extends State<DonePage> {
     _doneViewModel = DoneViewModel(TaskRepository());
   }
 
-  // Função que lida com a exclusão de uma tarefa
   void _deleteCompletedTask(int taskId) async {
     await _doneViewModel.delete(taskId);
-    setState(() {}); // Atualiza a UI após a exclusão da tarefa
+    setState(() {}); 
   }
 
   @override
@@ -40,7 +39,7 @@ class _DonePageState extends State<DonePage> {
               ElevatedButton(
                 onPressed: () async {
                   await _doneViewModel.deleteAll();
-                  setState(() {});  // Recarrega a página após excluir todas as tarefas
+                  setState(() {});  
                 },
                 child: Text("Delete All"),
               ),
