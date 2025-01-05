@@ -3,6 +3,7 @@ import 'package:todolist/app/create/create_page.dart';
 import 'package:todolist/app/done/done_page.dart';
 import 'package:todolist/app/home/home_page.dart';
 import 'package:todolist/app/search/search_page.dart';
+import 'package:todolist/app/ui/widgets/appbar_widget.dart';
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -27,8 +28,7 @@ class _AppWidgetState extends State<AppWidget> {
         debugShowCheckedModeBanner: false,
         home: Scaffold(
           appBar: AppBar(
-            
-            title: Text('Taski'),
+            title: AppBarWidget(),
           ),
           body: _pages[selectedIndex],
           bottomNavigationBar: NavigationBar(
