@@ -23,11 +23,12 @@ class _HomePageState extends State<HomePage> {
     _tasksFuture = _taskViewModel.fetchTasks();
   }
 
-  void _toggleTaskStatus(int index, Task task) async {
-    await _taskViewModel.toggleTaskStatus(index);
+  void _toggleTaskStatus(Task task) async {
     setState(() {
       task.isDone = !task.isDone;
     });
+
+    await _taskViewModel.toggleTaskStatus(task.id);
   }
 
   Future<void> _refreshTasks() async {
@@ -113,14 +114,12 @@ class _HomePageState extends State<HomePage> {
                     return Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          const Icon(Icons.note_alt,
-                              size: 50, color: Colors.grey),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "No tasks available. Add some tasks!",
-                            style: TextStyle(fontSize: 18, color: Colors.grey),
-                          ),
+                        children: const [
+                          Icon(Icons.note_alt, size: 50, color: Colors.grey),
+                          SizedBox(height: 10),
+                          Text("No tasks available. Add some tasks!",
+                              style:
+                                  TextStyle(fontSize: 18, color: Colors.grey)),
                         ],
                       ),
                     );
@@ -137,13 +136,14 @@ class _HomePageState extends State<HomePage> {
                         name: task.name,
                         isDone: task.isDone,
                         index: index,
-                        onToggle: () => _toggleTaskStatus(index, task),
+                        onToggle: () => _toggleTaskStatus(
+                            task), 
                       );
                     },
                   );
                 },
               ),
-            ),
+            )
           ],
         ),
       ),

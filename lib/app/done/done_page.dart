@@ -19,7 +19,6 @@ class _DonePageState extends State<DonePage> {
   void initState() {
     super.initState();
     _taskViewModel = TaskViewModel();
-    _tasksFuture = _taskViewModel.fetchTasks();
   }
 
   void _deleteCompletedTask(int taskId) async {

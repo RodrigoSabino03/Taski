@@ -24,7 +24,6 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _taskViewModel = TaskViewModel();
-    _tasksFuture = _taskViewModel.fetchTasks();
     _loadCompletedTasks();  
   }
 
