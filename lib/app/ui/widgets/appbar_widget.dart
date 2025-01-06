@@ -6,7 +6,7 @@ class AppBarWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween, // Espaçamento entre os itens
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               spacing: 8,
@@ -31,7 +31,7 @@ class AppBarWidget extends StatelessWidget {
                 ),
                 CircleAvatar(
                   radius: 16,
-                  backgroundImage: AssetImage('assets/avatar.png'), // Substitua com seu caminho de imagem
+                  backgroundImage: AssetImage('assets/avatar.png'),
                 ),
               ],
             ),

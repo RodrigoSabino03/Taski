@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/app/create/widgets/create_modal.dart';
 import 'package:todolist/app/task/model/task_model.dart';
 import 'package:todolist/app/done/widgets/card_widget.dart';
 import 'package:todolist/app/task/viewmodel/task_viewmodel.dart';
@@ -13,6 +14,8 @@ class SearchPage extends StatefulWidget {
 class _SearchPageState extends State<SearchPage> {
   late TaskViewModel _taskViewModel;
 
+  late Future<List<Task>> _tasksFuture;
+
   List<Task> _completedTasks = [];
   List<Task> _filteredTasks = [];
   String _searchQuery = '';
@@ -21,6 +24,7 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _taskViewModel = TaskViewModel();
+    _tasksFuture = _taskViewModel.fetchTasks();
     _loadCompletedTasks();  
   }
 
@@ -44,6 +48,12 @@ class _SearchPageState extends State<SearchPage> {
   void _deleteCompletedTask(int taskId) async {
     await _taskViewModel.deleteTask(taskId);
     _loadCompletedTasks(); 
+  }
+
+    Future<void> _refreshTasks() async {
+    setState(() {
+      _tasksFuture = _taskViewModel.fetchTasks();
+    });
   }
 
   @override
@@ -73,6 +83,39 @@ class _SearchPageState extends State<SearchPage> {
                         Text(
                           "No tasks available matching the search!",
                           style: TextStyle(fontSize: 18, color: Colors.grey),
+                        ),
+                                                ElevatedButton(
+                          onPressed: () async {
+                            final result = await showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (context) =>
+                                  TaskModal(taskViewModel: _taskViewModel),
+                            );
+
+                            if (result == true) {
+                              _refreshTasks();
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(5, 40),
+                            backgroundColor: Colors.blue.withOpacity(0.5),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.add, color: Colors.blue[800]),
+                              SizedBox(width: 8),
+                              Text(
+                                "Add Task",
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.blue[800]),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

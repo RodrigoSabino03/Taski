@@ -1,4 +1,3 @@
-// database_helper.dart
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import 'package:todolist/app/task/model/task_model.dart';

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todolist/app/create/widgets/create_modal.dart';
 import 'package:todolist/app/task/model/task_model.dart';
 import 'package:todolist/app/done/widgets/card_widget.dart';
 import 'package:todolist/app/task/viewmodel/task_viewmodel.dart';
@@ -12,15 +13,24 @@ class DonePage extends StatefulWidget {
 
 class _DonePageState extends State<DonePage> {
   late TaskViewModel _taskViewModel;
+
+  late Future<List<Task>> _tasksFuture;
   @override
   void initState() {
     super.initState();
     _taskViewModel = TaskViewModel();
+    _tasksFuture = _taskViewModel.fetchTasks();
   }
 
   void _deleteCompletedTask(int taskId) async {
     await _taskViewModel.deleteTask(taskId);
     setState(() {});
+  }
+
+  Future<void> _refreshTasks() async {
+    setState(() {
+      _tasksFuture = _taskViewModel.fetchTasks();
+    });
   }
 
   @override
@@ -66,8 +76,17 @@ class _DonePageState extends State<DonePage> {
                           style: TextStyle(fontSize: 18, color: Colors.grey),
                         ),
                         ElevatedButton(
-                          onPressed: () {
-                            Navigator.pushNamed(context, '/create');
+                          onPressed: () async {
+                            final result = await showModalBottomSheet(
+                              context: context,
+                              isScrollControlled: true,
+                              builder: (context) =>
+                                  TaskModal(taskViewModel: _taskViewModel),
+                            );
+
+                            if (result == true) {
+                              _refreshTasks();
+                            }
                           },
                           style: ElevatedButton.styleFrom(
                             minimumSize: Size(5, 40),
