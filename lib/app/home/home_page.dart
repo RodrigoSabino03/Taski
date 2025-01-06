@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
   void _toggleTaskStatus(int index, Task task) async {
     await _taskViewModel.toggleTaskStatus(index);
     setState(() {
-       task.isDone = !task.isDone;
+      task.isDone = !task.isDone;
     });
   }
 
@@ -35,6 +35,7 @@ class _HomePageState extends State<HomePage> {
       _tasksFuture = _taskViewModel.fetchTasks();
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -55,7 +56,7 @@ class _HomePageState extends State<HomePage> {
                         color: Colors.black),
                   ),
                   TextSpan(
-                    text: "Rodrigo",
+                    text: "John",
                     style: TextStyle(
                         fontSize: 24,
                         fontWeight: FontWeight.bold,
@@ -151,7 +152,12 @@ class _HomePageState extends State<HomePage> {
           final result = await showModalBottomSheet(
             context: context,
             isScrollControlled: true,
-            builder: (context) => TaskModal(taskViewModel: _taskViewModel),
+            builder: (context) {
+              return FractionallySizedBox(
+                heightFactor: 0.5,
+                child: TaskModal(taskViewModel: _taskViewModel),
+              );
+            },
           );
 
           if (result == true) {

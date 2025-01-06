@@ -1,10 +1,9 @@
-// app_widget.dart
 import 'package:flutter/material.dart';
 import 'package:todolist/app/home/home_page.dart';
 import 'package:todolist/app/search/search_page.dart';
 import 'package:todolist/app/done/done_page.dart';
 import 'package:todolist/app/ui/widgets/appbar_widget.dart';
-import 'package:todolist/app/ui/widgets/bottom_navigation_widget.dart';  // Importe o novo widget
+import 'package:todolist/app/ui/widgets/bottom_navigation_widget.dart';   
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -31,7 +30,7 @@ class _AppWidgetState extends State<AppWidget> {
           title: AppBarWidget(),
         ),
         body: _pages[selectedIndex], 
-        bottomNavigationBar: BottomNavigationWidget(  // Use o novo widget aqui
+        bottomNavigationBar: BottomNavigationWidget(  
           selectedIndex: selectedIndex,
           onDestinationSelected: (index) {
             setState(() {

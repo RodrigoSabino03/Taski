@@ -26,7 +26,7 @@ class AppBarWidget extends StatelessWidget {
               spacing: 8,
               children: [
                 Text(
-                  'Rodrigo',
+                  'John',
                   style: TextStyle(fontSize: 16, color: Colors.black),
                 ),
                 CircleAvatar(

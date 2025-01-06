@@ -16,14 +16,24 @@ class TaskModal extends StatelessWidget {
         bottom: MediaQuery.of(context).viewInsets.bottom + 16,
       ),
       child: Column(
+        spacing: 16,
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'Add New Task',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 16),
+          Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
+            const Text(
+              'Add New Task',
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+            ),
+              TextButton(
+                onPressed: () {
+                  taskViewModel.clearForm();
+                  Navigator.pop(context);
+                },
+                child: const Icon(Icons.close),
+              ),
+
+          ]),
           TextField(
             decoration: const InputDecoration(
               labelText: 'Task Title',
@@ -31,7 +41,6 @@ class TaskModal extends StatelessWidget {
             ),
             onChanged: (value) => taskViewModel.updateTitle(value),
           ),
-          const SizedBox(height: 16),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -40,8 +49,7 @@ class TaskModal extends StatelessWidget {
                   if (taskViewModel.title.isNotEmpty) {
                     await taskViewModel.addTask();
                     taskViewModel.clearForm();
-                    Navigator.pop(
-                        context, true);
+                    Navigator.pop(context, true);
                   } else {
                     showDialog(
                       context: context,
@@ -58,15 +66,7 @@ class TaskModal extends StatelessWidget {
                     );
                   }
                 },
-                child: const Text('Save'),
-              ),
-              const SizedBox(width: 8),
-              TextButton(
-                onPressed: () {
-                  taskViewModel.clearForm();
-                  Navigator.pop(context);
-                },
-                child: const Text('Cancel'),
+                child: const Text('Create Task'),
               ),
             ],
           ),
