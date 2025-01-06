@@ -13,9 +13,6 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   late TaskViewModel _taskViewModel;
-
-  late Future<List<Task>> _tasksFuture;
-
   List<Task> _completedTasks = [];
   List<Task> _filteredTasks = [];
   String _searchQuery = '';
@@ -24,14 +21,14 @@ class _SearchPageState extends State<SearchPage> {
   void initState() {
     super.initState();
     _taskViewModel = TaskViewModel();
-    _loadCompletedTasks();  
+    _loadTasks();
   }
 
-  void _loadCompletedTasks() async {
+  void _loadTasks() async {
     final tasks = await _taskViewModel.fetchTasks();
     setState(() {
       _completedTasks = tasks;
-      _filteredTasks = tasks;  
+      _filteredTasks = tasks;
     });
   }
 
@@ -39,102 +36,106 @@ class _SearchPageState extends State<SearchPage> {
     setState(() {
       _searchQuery = query;
       _filteredTasks = _completedTasks
-          .where((task) => task.name.toLowerCase().contains(query.toLowerCase()))
-          .toList(); 
+          .where(
+              (task) => task.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
     });
   }
 
   void _deleteCompletedTask(int taskId) async {
     await _taskViewModel.deleteTask(taskId);
-    _loadCompletedTasks(); 
+    _loadTasks();
   }
 
-    Future<void> _refreshTasks() async {
+  Future<void> _refreshTasks() async {
     setState(() {
-      _tasksFuture = _taskViewModel.fetchTasks();
+      _loadTasks();
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextField(
-              onChanged: _searchTasks,
-              decoration: InputDecoration(
-                labelText: 'Search tasks...',
-                border: OutlineInputBorder(),
-                prefixIcon: Icon(Icons.search),
-              ),
+      padding: const EdgeInsets.all(16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            onChanged: _searchTasks,
+            decoration: InputDecoration(
+              labelText: 'Search tasks...',
+              border: OutlineInputBorder(),
+              prefixIcon: Icon(Icons.search),
             ),
-            SizedBox(height: 16),
+          ),
+          SizedBox(height: 16),
+          _filteredTasks.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.note_alt, size: 50, color: Colors.grey),
+                      SizedBox(height: 10),
+                      Text(
+                        "No tasks available matching the search!",
+                        style: TextStyle(fontSize: 18, color: Colors.grey),
+                      ),
+                      ElevatedButton(
+                        onPressed: () async {
+                          final result = await showModalBottomSheet(
+                            context: context,
+                            isScrollControlled: true,
+                            builder: (context) {
+                              return FractionallySizedBox(
+                                heightFactor: 0.5,
+                                child: TaskModal(taskViewModel: _taskViewModel),
+                              );
+                            },
+                          );
 
-            _filteredTasks.isEmpty
-                ? Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(Icons.note_alt, size: 50, color: Colors.grey),
-                        SizedBox(height: 10),
-                        Text(
-                          "No tasks available matching the search!",
-                          style: TextStyle(fontSize: 18, color: Colors.grey),
+                          if (result == true) {
+                            _refreshTasks();
+                          }
+                        },
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(5, 40),
+                          backgroundColor: Colors.blue.withOpacity(0.5),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                         ),
-                                                ElevatedButton(
-                          onPressed: () async {
-                            final result = await showModalBottomSheet(
-                              context: context,
-                              isScrollControlled: true,
-                              builder: (context) =>
-                                  TaskModal(taskViewModel: _taskViewModel),
-                            );
-
-                            if (result == true) {
-                              _refreshTasks();
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            minimumSize: Size(5, 40),
-                            backgroundColor: Colors.blue.withOpacity(0.5),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(8),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(Icons.add, color: Colors.blue[800]),
+                            SizedBox(width: 8),
+                            Text(
+                              "Add Task",
+                              style: TextStyle(
+                                  fontSize: 16, color: Colors.blue[800]),
                             ),
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(Icons.add, color: Colors.blue[800]),
-                              SizedBox(width: 8),
-                              Text(
-                                "Add Task",
-                                style: TextStyle(
-                                    fontSize: 16, color: Colors.blue[800]),
-                              ),
-                            ],
-                          ),
+                          ],
                         ),
-                      ],
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      itemCount: _filteredTasks.length,
-                      itemBuilder: (context, index) {
-                        final task = _filteredTasks[index];
-
-                        return CardWidget(
-                          name: task.name,
-                          index: index,
-                          onDelete: () => _deleteCompletedTask(task.id),
-                        );
-                      },
-                    ),
+                      ),
+                    ],
                   ),
-          ],
-        ),
-      );
+                )
+              : Expanded(
+                  child: ListView.builder(
+                    itemCount: _filteredTasks.length,
+                    itemBuilder: (context, index) {
+                      final task = _filteredTasks[index];
+
+                      return CardWidget(
+                        name: task.name,
+                        index: index,
+                        onDelete: () => _deleteCompletedTask(task.id),
+                      );
+                    },
+                  ),
+                ),
+        ],
+      ),
+    );
   }
 }

@@ -79,8 +79,13 @@ class _DonePageState extends State<DonePage> {
                             final result = await showModalBottomSheet(
                               context: context,
                               isScrollControlled: true,
-                              builder: (context) =>
-                                  TaskModal(taskViewModel: _taskViewModel),
+                              builder: (context) {
+                                return FractionallySizedBox(
+                                  heightFactor: 0.5,
+                                  child:
+                                      TaskModal(taskViewModel: _taskViewModel),
+                                );
+                              },
                             );
 
                             if (result == true) {

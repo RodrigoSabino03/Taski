@@ -41,11 +41,10 @@ Future<void> addTask() async {
     title = '';
   }
 
-  Future<void> toggleTaskStatus(int taskId) async {
-    final task = tasks.firstWhere((t) => t.id == taskId);
+  Future<void> toggleTaskStatus(int index) async {
+    final task = tasks.firstWhere((t) => t.id == index);
     task.isDone = !task.isDone;
     await _taskRepository.updateTask(task);
-    await fetchTasks();
   }
 
   Future<void> deleteTask(int taskId) async {

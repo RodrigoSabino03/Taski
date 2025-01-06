@@ -23,13 +23,14 @@ class _HomePageState extends State<HomePage> {
     _tasksFuture = _taskViewModel.fetchTasks();
   }
 
-  void _toggleTaskStatus(Task task) async {
-    setState(() {
+ void _toggleTaskStatus(Task task) async {
+   setState(() {
       task.isDone = !task.isDone;
-    });
+     _taskViewModel.toggleTaskStatus(task.id);
+   });
+    _taskViewModel.toggleTaskStatus(task.id);
 
-    await _taskViewModel.toggleTaskStatus(task.id);
-  }
+ }
 
   Future<void> _refreshTasks() async {
     setState(() {
@@ -136,8 +137,7 @@ class _HomePageState extends State<HomePage> {
                         name: task.name,
                         isDone: task.isDone,
                         index: index,
-                        onToggle: () => _toggleTaskStatus(
-                            task), 
+                        onToggle: () => _toggleTaskStatus(task), 
                       );
                     },
                   );
