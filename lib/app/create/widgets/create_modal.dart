@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/app/create/viewmodel/create_viewmodel.dart';
+import 'package:todolist/app/task/viewmodel/task_viewmodel.dart';
 
 class TaskModal extends StatelessWidget {
   final TaskViewModel taskViewModel;
@@ -37,9 +37,26 @@ class TaskModal extends StatelessWidget {
             children: [
               ElevatedButton(
                 onPressed: () async {
-                  await taskViewModel.addTask();
-                  taskViewModel.clearForm();
-                  Navigator.pop(context, true); 
+                  if (taskViewModel.title.isNotEmpty) {
+                    await taskViewModel.addTask();
+                    taskViewModel.clearForm();
+                    Navigator.pop(
+                        context, true);
+                  } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: const Text("Error"),
+                        content: const Text("Task title cannot be empty."),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: const Text("OK"),
+                          ),
+                        ],
+                      ),
+                    );
+                  }
                 },
                 child: const Text('Save'),
               ),

@@ -1,5 +1,5 @@
-import 'package:todolist/app/data/db/database.dart';
-import 'package:todolist/app/data/model/task_model.dart';
+import 'package:todolist/app/data/database/database.dart';
+import 'package:todolist/app/task/model/task_model.dart';
 
 class TaskRepository {
   final DatabaseHelper _databaseHelper = DatabaseHelper();

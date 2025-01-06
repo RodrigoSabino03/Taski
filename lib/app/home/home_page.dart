@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/app/create/viewmodel/create_viewmodel.dart';
 import 'package:todolist/app/create/widgets/create_modal.dart';
-import 'package:todolist/app/data/model/task_model.dart';
-import 'package:todolist/app/data/repositories/task_repository.dart';
-import 'package:todolist/app/home/viewmodel/home_viewmodel.dart';
+import 'package:todolist/app/task/model/task_model.dart';
 import 'package:todolist/app/home/widgets/card_widget.dart';
+import 'package:todolist/app/task/viewmodel/task_viewmodel.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -14,52 +12,65 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  late HomeViewModel _homeViewModel;
   late TaskViewModel _taskViewModel;
+
   late Future<List<Task>> _tasksFuture;
 
   @override
   void initState() {
     super.initState();
-    _homeViewModel = HomeViewModel(TaskRepository());
-    _taskViewModel = TaskViewModel(); // Inicializando o TaskViewModel
-    _tasksFuture = _homeViewModel.getAllTasks();
+    _taskViewModel = TaskViewModel();
+    _tasksFuture = _taskViewModel.fetchTasks();
   }
 
   void _toggleTaskStatus(int index, Task task) async {
-    await _homeViewModel.toggleTaskStatus(index);
+    await _taskViewModel.toggleTaskStatus(index);
     setState(() {
-      task.isDone = !task.isDone;
+       task.isDone = !task.isDone;
     });
   }
 
   Future<void> _refreshTasks() async {
     setState(() {
-      _tasksFuture = _homeViewModel.getAllTasks();
+      _tasksFuture = _taskViewModel.fetchTasks();
     });
   }
-
-  Future<void> _loadTasks() async {
-    await _homeViewModel.getAllTasks();
-    setState(() {});
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text("Task Manager"),
-      ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          spacing: 4,
           children: [
-            const Text(
-              "Welcome, Rodrigo.",
-              style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+            RichText(
+              text: TextSpan(
+                children: [
+                  const TextSpan(
+                    text: "Welcome, ",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                  TextSpan(
+                    text: "Rodrigo",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.blue),
+                  ),
+                  const TextSpan(
+                    text: ".",
+                    style: TextStyle(
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black),
+                  ),
+                ],
+              ),
             ),
-            const SizedBox(height: 8),
             FutureBuilder<List<Task>>(
               future: _tasksFuture,
               builder: (context, snapshot) {

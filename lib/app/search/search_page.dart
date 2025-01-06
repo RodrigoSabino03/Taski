@@ -1,9 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:todolist/app/data/model/task_model.dart';
-import 'package:todolist/app/data/repositories/task_repository.dart';
-import 'package:todolist/app/done/viewmodel/done_viewmodel.dart';
+import 'package:todolist/app/task/model/task_model.dart';
 import 'package:todolist/app/done/widgets/card_widget.dart';
-import 'package:todolist/app/home/viewmodel/home_viewmodel.dart';
+import 'package:todolist/app/task/viewmodel/task_viewmodel.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
@@ -13,8 +11,7 @@ class SearchPage extends StatefulWidget {
 }
 
 class _SearchPageState extends State<SearchPage> {
-  late HomeViewModel _homeViewModel;
-  late DoneViewModel _doneViewModel;
+  late TaskViewModel _taskViewModel;
 
   List<Task> _completedTasks = [];
   List<Task> _filteredTasks = [];
@@ -23,12 +20,12 @@ class _SearchPageState extends State<SearchPage> {
   @override
   void initState() {
     super.initState();
-    _homeViewModel = HomeViewModel(TaskRepository());
+    _taskViewModel = TaskViewModel();
     _loadCompletedTasks();  
   }
 
   void _loadCompletedTasks() async {
-    final tasks = await _homeViewModel.getAllTasks();
+    final tasks = await _taskViewModel.fetchTasks();
     setState(() {
       _completedTasks = tasks;
       _filteredTasks = tasks;  
@@ -45,7 +42,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void _deleteCompletedTask(int taskId) async {
-    await _doneViewModel.delete(taskId);
+    await _taskViewModel.deleteTask(taskId);
     _loadCompletedTasks(); 
   }
 
