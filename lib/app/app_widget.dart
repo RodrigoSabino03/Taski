@@ -1,8 +1,10 @@
+// app_widget.dart
 import 'package:flutter/material.dart';
 import 'package:todolist/app/home/home_page.dart';
 import 'package:todolist/app/search/search_page.dart';
 import 'package:todolist/app/done/done_page.dart';
 import 'package:todolist/app/ui/widgets/appbar_widget.dart';
+import 'package:todolist/app/ui/widgets/bottom_navigation_widget.dart';  // Importe o novo widget
 
 class AppWidget extends StatefulWidget {
   const AppWidget({super.key});
@@ -20,7 +22,6 @@ class _AppWidgetState extends State<AppWidget> {
 
   var selectedIndex = 0;
 
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -30,18 +31,13 @@ class _AppWidgetState extends State<AppWidget> {
           title: AppBarWidget(),
         ),
         body: _pages[selectedIndex], 
-        bottomNavigationBar: NavigationBar(
+        bottomNavigationBar: BottomNavigationWidget(  // Use o novo widget aqui
           selectedIndex: selectedIndex,
           onDestinationSelected: (index) {
             setState(() {
               selectedIndex = index;
             });
           },
-          destinations: [
-            NavigationDestination(icon: Icon(Icons.list), label: 'Todo'),
-            NavigationDestination(icon: Icon(Icons.search), label: 'Search'),
-            NavigationDestination(icon: Icon(Icons.check), label: 'Done'),
-          ],
         ),
       ),
     );

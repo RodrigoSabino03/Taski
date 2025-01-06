@@ -7,7 +7,6 @@ void main(List<String> args) {
 }
 
 
-// TODO: colocar funçao no botao create task da search page & done page
 // TODO: estilizar o create modal
 
 
